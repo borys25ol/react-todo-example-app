@@ -5,7 +5,16 @@ const Heading = styled.h1`
   visibility: hidden;
 `
 
-const Main = styled.main``
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+
+  & {
+    .spinner {
+      align-self: center;
+    }
+  }
+`
 
 const Wrapper = styled.div`
   width: 100%;
