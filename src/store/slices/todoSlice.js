@@ -1,23 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { CREATE_TODO_URL, DELETE_TODO_URL, GET_TODOS_URL, UPDATE_TODO_URL } from 'config'
+import { TodoAPIService } from 'api'
+
+const token = localStorage.getItem('token')
+
+const service = new TodoAPIService(token)
 
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
   async function (_, { rejectWithValue }) {
     try {
-      const response = await fetch(GET_TODOS_URL, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: 'Basic dGVzdC11c2VyOndlZWtwYXNzd29yZA==',
-        },
-      })
-      const jsonData = await response.json()
-      if (!jsonData.success) {
-        throw new Error(jsonData.message)
+      const response = await service.fetchTodos()
+      if (!response.success) {
+        throw new Error(response.message)
       }
-      return { tasks: jsonData.data }
+      return { tasks: response.data }
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -28,43 +25,13 @@ export const createTodo = createAsyncThunk(
   'todo/createTodo',
   async function (text, { rejectWithValue }) {
     try {
-      const response = await fetch(CREATE_TODO_URL, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-type': 'application/json',
-          Authorization: 'Basic dGVzdC11c2VyOndlZWtwYXNzd29yZA==',
-        },
-        body: JSON.stringify({ title: text }),
-      })
-      const jsonData = await response.json()
-      if (!jsonData.success) {
-        throw new Error(jsonData.message)
+      const response = await service.createTodo(text)
+      if (!response.success) {
+        throw new Error(response.message)
       }
-      const createdTask = jsonData.data
-      return { task: { id: createdTask.id, text: createdTask.title, completed: createdTask.done } }
-    } catch (error) {
-      return rejectWithValue(error.message)
-    }
-  }
-)
-
-export const deleteTodo = createAsyncThunk(
-  'todo/deleteTodo',
-  async function (taskId, { rejectWithValue }) {
-    try {
-      const response = await fetch(DELETE_TODO_URL(taskId), {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          Authorization: 'Basic dGVzdC11c2VyOndlZWtwYXNzd29yZA==',
-        },
-      })
-      const jsonData = await response.json()
-      if (!jsonData.success) {
-        throw new Error(jsonData.message)
+      return {
+        task: { id: response.data.id, text: response.data.title, completed: response.data.done },
       }
-      return { taskId }
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -73,22 +40,28 @@ export const deleteTodo = createAsyncThunk(
 
 export const updateTodo = createAsyncThunk(
   'todo/updateTodo',
-  async function (task, { rejectWithValue }) {
+  async function (todo, { rejectWithValue }) {
     try {
-      const response = await fetch(UPDATE_TODO_URL(task.id), {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-type': 'application/json',
-          Authorization: 'Basic dGVzdC11c2VyOndlZWtwYXNzd29yZA==',
-        },
-        body: JSON.stringify({ title: task.text, done: task.completed }),
-      })
-      const jsonData = await response.json()
-      if (!jsonData.success) {
-        throw new Error(jsonData.message)
+      const response = await service.updateTodo(todo)
+      if (!response.success) {
+        throw new Error(response.message)
       }
-      return { task }
+      return { todo }
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const deleteTodo = createAsyncThunk(
+  'todo/deleteTodo',
+  async function (todoId, { rejectWithValue }) {
+    try {
+      const response = await service.deleteTodo(todoId)
+      if (!response.success) {
+        throw new Error(response.message)
+      }
+      return { todoId }
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -139,7 +112,7 @@ const todoSlice = createSlice({
     [updateTodo.fulfilled]: (state, action) => {
       state.status = 'resolved'
       state.todos = state.todos.map(task => {
-        if (task.id === action.payload.task.id) {
+        if (task.id === action.payload.todo.id) {
           return {
             ...task,
             completed: !task.completed,
@@ -158,7 +131,7 @@ const todoSlice = createSlice({
     },
     [deleteTodo.fulfilled]: (state, action) => {
       state.status = 'resolved'
-      state.todos = state.todos.filter(task => task.id !== action.payload.taskId)
+      state.todos = state.todos.filter(task => task.id !== action.payload.todoId)
     },
     [deleteTodo.rejected]: (state, action) => {
       state.status = 'rejected'
