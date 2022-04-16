@@ -1,26 +1,31 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useDispatch } from 'react-redux'
 
 import { ReactComponent as IconRemove } from 'assets/icon-cross.svg'
 import { ReactComponent as IconCheck } from 'assets/icon-check.svg'
 import { Wrapper, Flex, CheckboxWrapper, TodoText, RemoveButton, Mock } from 'components/TodoItem'
+import { deleteTodo, updateTodo } from 'store/slices/todoSlice'
 
-function TodoItem({ id, text, isCompleted = false, handleTodoRemove, handleTodoComplete }) {
-  const [completed, setCompleted] = useState(isCompleted)
+function TodoItem({ todo }) {
+  const dispatch = useDispatch()
 
   const toggleCompleted = () => {
-    setCompleted(!completed)
-    handleTodoComplete(id)
+    dispatch(updateTodo({ ...todo, completed: !todo.completed }))
+  }
+
+  const handleTodoRemove = todo => {
+    dispatch(deleteTodo(todo.id))
   }
 
   return (
     <Wrapper>
       <Flex>
-        <CheckboxWrapper completed={completed} onClick={() => toggleCompleted()}>
-          {completed ? <IconCheck /> : <Mock />}
+        <CheckboxWrapper completed={todo.completed} onClick={() => toggleCompleted()}>
+          {todo.completed ? <IconCheck /> : <Mock />}
         </CheckboxWrapper>
-        <TodoText completed={completed}>{text}</TodoText>
+        <TodoText completed={todo.completed}>{todo.text}</TodoText>
       </Flex>
-      <RemoveButton onClick={() => handleTodoRemove(id)}>
+      <RemoveButton onClick={() => handleTodoRemove(todo)}>
         <IconRemove />
       </RemoveButton>
     </Wrapper>

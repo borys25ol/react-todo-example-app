@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 import { CheckboxWrapper, Input, Wrapper } from 'components/TodoForm'
+import { createTodo } from 'store/slices/todoSlice'
 
-function TodoForm({ todosList, handleTodoAdd }) {
+function TodoForm() {
+  const dispatch = useDispatch()
   const [value, setValue] = useState('')
 
   const addTodo = () => {
     if (value.trim()) {
-      handleTodoAdd(value)
+      dispatch(createTodo(value))
       setValue('')
     }
   }

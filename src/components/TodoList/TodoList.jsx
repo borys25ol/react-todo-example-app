@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 import { TodoItem } from 'components/TodoItem'
 import {
@@ -13,36 +14,54 @@ import {
   Wrapper,
 } from 'components/TodoList'
 import { TASK_STATE } from 'const'
+import { todosSelector } from 'store/slices/todoSlice'
+import { filterActiveTasks, filterCompletedTasks } from 'utils'
 
-function TodoList({
-  states,
-  todosList,
-  currentState,
-  activeTasks,
-  handleReorder,
-  handleStateChange,
-  handleTodoRemove,
-  handleTodoComplete,
-  handleCompletedRemove,
-}) {
+function TodoList() {
+  const { todos } = useSelector(todosSelector)
+
+  const [currentState, setCurrentState] = useState(TASK_STATE.All)
+  const [filteredTodos, setFilteredTodos] = useState(todos)
+  const [activeTasks, setActiveTasks] = useState(0)
+
+  const states = Object.values(TASK_STATE)
+
+  const handleStateChange = state => {
+    setCurrentState(state)
+  }
+
+  useEffect(() => {
+    switch (currentState) {
+      case TASK_STATE.All:
+        setFilteredTodos(todos)
+        break
+      case TASK_STATE.Completed:
+        setFilteredTodos(filterCompletedTasks(todos))
+        break
+      case TASK_STATE.Active:
+        setFilteredTodos(filterActiveTasks(todos))
+        break
+      default:
+        setFilteredTodos(todos)
+    }
+  }, [currentState, todos])
+
+  useEffect(() => {
+    const tasks = filterActiveTasks(todos)
+    setActiveTasks(tasks.length)
+  }, [todos])
+
   return (
     <>
       <Wrapper>
-        {todosList.length < 1 ? (
+        {!filteredTodos.length ? (
           <InfoText>
             There are no {currentState === TASK_STATE.All ? '' : currentState} tasks
           </InfoText>
         ) : (
           <List>
-            {todosList.map(todo => (
-              <TodoItem
-                key={todo.id}
-                id={todo.id}
-                text={todo.text}
-                isCompleted={todo.completed}
-                handleTodoRemove={handleTodoRemove}
-                handleTodoComplete={handleTodoComplete}
-              />
+            {filteredTodos.map(todo => (
+              <TodoItem key={todo.id} todo={todo} />
             ))}
           </List>
         )}
@@ -59,7 +78,7 @@ function TodoList({
               </StateButton>
             ))}
           </TodoFiltersDesktop>
-          <ClearButton onClick={() => handleCompletedRemove()}>Clear Completed</ClearButton>
+          <ClearButton onClick={() => {}}>Clear Completed</ClearButton>
         </TodoFilterControl>
       </Wrapper>
       <TodoFiltersMobile>
