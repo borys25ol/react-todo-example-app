@@ -1,4 +1,10 @@
-import { GET_TODOS_URL, CREATE_TODO_URL, UPDATE_TODO_URL, DELETE_TODO_URL } from 'config'
+import {
+  GET_TODOS_URL,
+  CREATE_TODO_URL,
+  UPDATE_TODO_URL,
+  DELETE_TODO_URL,
+  DELETE_TODOS_URL,
+} from 'config'
 
 export class TodoAPIService {
   constructor(token) {
@@ -40,6 +46,15 @@ export class TodoAPIService {
     const response = await fetch(DELETE_TODO_URL(todoId), {
       method: 'DELETE',
       headers: this.headers,
+    })
+    return await response.json()
+  }
+
+  async deleteTodos(todoIds) {
+    const response = await fetch(DELETE_TODOS_URL, {
+      method: 'DELETE',
+      headers: this.headers,
+      body: JSON.stringify({ ids: todoIds }),
     })
     return await response.json()
   }

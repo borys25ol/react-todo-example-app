@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { TodoItem } from 'components/TodoItem'
 import {
@@ -14,10 +14,11 @@ import {
   Wrapper,
 } from 'components/TodoList'
 import { TASK_STATE } from 'const'
-import { todosSelector } from 'store/slices/todoSlice'
+import { deleteTodos, todosSelector } from 'store/slices/todoSlice'
 import { filterActiveTasks, filterCompletedTasks } from 'utils'
 
 function TodoList() {
+  const dispatch = useDispatch()
   const { todos } = useSelector(todosSelector)
 
   const [currentState, setCurrentState] = useState(TASK_STATE.All)
@@ -28,6 +29,12 @@ function TodoList() {
 
   const handleStateChange = state => {
     setCurrentState(state)
+  }
+
+  const handleCompletedClear = () => {
+    const completedTask = filterCompletedTasks(todos)
+    const todoIds = completedTask.map(todo => todo.id)
+    dispatch(deleteTodos(todoIds))
   }
 
   useEffect(() => {
@@ -78,7 +85,7 @@ function TodoList() {
               </StateButton>
             ))}
           </TodoFiltersDesktop>
-          <ClearButton onClick={() => {}}>Clear Completed</ClearButton>
+          <ClearButton onClick={() => handleCompletedClear()}>Clear Completed</ClearButton>
         </TodoFilterControl>
       </Wrapper>
       <TodoFiltersMobile>

@@ -68,6 +68,21 @@ export const deleteTodo = createAsyncThunk(
   }
 )
 
+export const deleteTodos = createAsyncThunk(
+  'todo/deleteTodos',
+  async function (todoIds, { rejectWithValue }) {
+    try {
+      const response = await service.deleteTodos(todoIds)
+      if (!response.success) {
+        throw new Error(response.message)
+      }
+      return { todoIds }
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
 const todoSlice = createSlice({
   name: 'todos',
   initialState: {
@@ -134,6 +149,18 @@ const todoSlice = createSlice({
       state.todos = state.todos.filter(task => task.id !== action.payload.todoId)
     },
     [deleteTodo.rejected]: (state, action) => {
+      state.status = 'rejected'
+      state.error = action.payload
+    },
+    [deleteTodos.pending]: state => {
+      state.status = 'loading'
+      state.error = null
+    },
+    [deleteTodos.fulfilled]: (state, action) => {
+      state.status = 'resolved'
+      state.todos = state.todos.filter(todo => !action.payload.todoIds.includes(todo.id))
+    },
+    [deleteTodos.rejected]: (state, action) => {
       state.status = 'rejected'
       state.error = action.payload
     },
