@@ -15,7 +15,7 @@ import {
 } from 'components/TodoList'
 import { TASK_STATE } from 'const'
 import { deleteTodos, todosSelector } from 'store/slices/todoSlice'
-import { filterActiveTasks, filterCompletedTasks } from 'utils'
+import { filterActiveTodos, filterCompletedTodos } from 'utils/todos'
 
 function TodoList() {
   const dispatch = useDispatch()
@@ -33,7 +33,7 @@ function TodoList() {
   }
 
   const handleCompletedClear = () => {
-    const completedTask = filterCompletedTasks(todos)
+    const completedTask = filterCompletedTodos(todos)
     const todoIds = completedTask.map(todo => todo.id)
     if (todoIds.length) {
       dispatch(deleteTodos(todoIds))
@@ -46,10 +46,10 @@ function TodoList() {
         setFilteredTodos(todos)
         break
       case TASK_STATE.Completed:
-        setFilteredTodos(filterCompletedTasks(todos))
+        setFilteredTodos(filterCompletedTodos(todos))
         break
       case TASK_STATE.Active:
-        setFilteredTodos(filterActiveTasks(todos))
+        setFilteredTodos(filterActiveTodos(todos))
         break
       default:
         setFilteredTodos(todos)
@@ -57,7 +57,7 @@ function TodoList() {
   }, [currentState, todos])
 
   useEffect(() => {
-    const tasks = filterActiveTasks(todos)
+    const tasks = filterActiveTodos(todos)
     setActiveTasks(tasks.length)
   }, [todos])
 

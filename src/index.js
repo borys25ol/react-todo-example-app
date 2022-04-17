@@ -7,18 +7,16 @@ import App from 'App'
 import store from 'store'
 
 import 'index.css'
-import { LoginWrapper } from 'components/Wrapper'
+import { setAuthorized } from 'store/slices/authSlice'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
+store.dispatch(setAuthorized())
+
 root.render(
   <Router>
-    <React.StrictMode>
-      <Provider store={store}>
-        <LoginWrapper>
-          <App />
-        </LoginWrapper>
-      </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
   </Router>
 )

@@ -6,12 +6,13 @@ import {
   DELETE_TODOS_URL,
   LOCALSTORAGE_TOKEN_KEY,
 } from 'config'
+import { getValue } from 'utils/localStorage'
 
-export class TodoAPIService {
-  constructor(token) {
-    this.headers = {
+class TodoAPIService {
+  get headers() {
+    return {
       Accept: 'application/json',
-      Authorization: `Basic ${localStorage.getItem(LOCALSTORAGE_TOKEN_KEY)}`,
+      Authorization: `Basic ${getValue(LOCALSTORAGE_TOKEN_KEY)}`,
       'Content-type': 'application/json',
     }
   }
@@ -59,3 +60,5 @@ export class TodoAPIService {
     return await response.json()
   }
 }
+
+export default new TodoAPIService()

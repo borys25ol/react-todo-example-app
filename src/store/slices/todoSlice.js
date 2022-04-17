@@ -1,37 +1,27 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { TodoAPIService } from 'api/todo'
+import TodoService from 'api/todo'
 
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
   async function (_, { rejectWithValue }) {
-    try {
-      const service = new TodoAPIService()
-      const response = await service.fetchTodos()
-      if (!response.success) {
-        throw new Error(response.message)
-      }
-      return { tasks: response.data }
-    } catch (error) {
-      return rejectWithValue(error.message)
+    const response = await TodoService.fetchTodos()
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
     }
+    return { todos: response.data }
   }
 )
 
 export const createTodo = createAsyncThunk(
   'todo/createTodo',
   async function (text, { rejectWithValue }) {
-    try {
-      const service = new TodoAPIService()
-      const response = await service.createTodo(text)
-      if (!response.success) {
-        throw new Error(response.message)
-      }
-      return {
-        task: { id: response.data.id, text: response.data.title, completed: response.data.done },
-      }
-    } catch (error) {
-      return rejectWithValue(error.message)
+    const response = await TodoService.createTodo(text)
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
+    }
+    return {
+      todo: { id: response.data.id, text: response.data.title, completed: response.data.done },
     }
   }
 )
@@ -39,94 +29,82 @@ export const createTodo = createAsyncThunk(
 export const updateTodo = createAsyncThunk(
   'todo/updateTodo',
   async function (todo, { rejectWithValue }) {
-    try {
-      const service = new TodoAPIService()
-      const response = await service.updateTodo(todo)
-      if (!response.success) {
-        throw new Error(response.message)
-      }
-      return { todo }
-    } catch (error) {
-      return rejectWithValue(error.message)
+    const response = await TodoService.updateTodo(todo)
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
     }
+    return { todo }
   }
 )
 
 export const deleteTodo = createAsyncThunk(
   'todo/deleteTodo',
   async function (todoId, { rejectWithValue }) {
-    try {
-      const service = new TodoAPIService()
-      const response = await service.deleteTodo(todoId)
-      if (!response.success) {
-        throw new Error(response.message)
-      }
-      return { todoId }
-    } catch (error) {
-      return rejectWithValue(error.message)
+    const response = await TodoService.deleteTodo(todoId)
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
     }
+    return { todoId }
   }
 )
 
 export const deleteTodos = createAsyncThunk(
   'todo/deleteTodos',
   async function (todoIds, { rejectWithValue }) {
-    try {
-      const service = new TodoAPIService()
-      const response = await service.deleteTodos(todoIds)
-      if (!response.success) {
-        throw new Error(response.message)
-      }
-      return { todoIds }
-    } catch (error) {
-      return rejectWithValue(error.message)
+    const response = await TodoService.deleteTodos(todoIds)
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
     }
+    return { todoIds }
   }
 )
 
 const todoSlice = createSlice({
   name: 'todos',
   initialState: {
+    loading: null,
     todos: null,
-    status: null,
-    error: null,
+    isError: null,
+    errorMessage: null,
   },
   reducers: {},
   extraReducers: {
     [fetchTodos.pending]: state => {
-      state.status = 'loading'
-      state.error = null
+      state.loading = true
     },
     [fetchTodos.fulfilled]: (state, action) => {
-      state.status = 'resolved'
-      state.todos = action.payload.tasks.map(task => ({
-        id: task.id,
-        text: task.title,
-        completed: task.done,
+      state.loading = false
+      state.isError = false
+      state.todos = action.payload.todos.map(todo => ({
+        id: todo.id,
+        text: todo.title,
+        completed: todo.done,
       }))
     },
-    [createTodo.rejected]: (state, action) => {
-      state.status = 'rejected'
-      state.error = action.payload
+    [fetchTodos.rejected]: (state, action) => {
+      state.loading = false
+      state.isError = true
+      state.errorMessage = action.payload.message
     },
     [createTodo.pending]: state => {
-      state.status = 'loading'
-      state.error = null
+      state.loading = true
     },
     [createTodo.fulfilled]: (state, action) => {
-      state.status = 'resolved'
-      state.todos = [action.payload.task, ...state.todos]
+      state.loading = false
+      state.isError = false
+      state.todos = [action.payload.todo, ...state.todos]
     },
-    [fetchTodos.rejected]: (state, action) => {
-      state.status = 'rejected'
-      state.error = action.payload
+    [createTodo.rejected]: (state, action) => {
+      state.loading = false
+      state.isError = true
+      state.errorMessage = action.payload.message
     },
     [updateTodo.pending]: state => {
-      state.status = 'loading'
-      state.error = null
+      state.loading = true
     },
     [updateTodo.fulfilled]: (state, action) => {
-      state.status = 'resolved'
+      state.loading = false
+      state.isError = false
       state.todos = state.todos.map(task => {
         if (task.id === action.payload.todo.id) {
           return {
@@ -138,32 +116,35 @@ const todoSlice = createSlice({
       })
     },
     [updateTodo.rejected]: (state, action) => {
-      state.status = 'rejected'
-      state.error = action.payload
+      state.loading = false
+      state.isError = true
+      state.errorMessage = action.payload.message
     },
     [deleteTodo.pending]: state => {
-      state.status = 'loading'
-      state.error = null
+      state.loading = true
     },
     [deleteTodo.fulfilled]: (state, action) => {
-      state.status = 'resolved'
-      state.todos = state.todos.filter(task => task.id !== action.payload.todoId)
+      state.loading = false
+      state.isError = false
+      state.todos = state.todos.filter(todo => todo.id !== action.payload.todoId)
     },
     [deleteTodo.rejected]: (state, action) => {
-      state.status = 'rejected'
-      state.error = action.payload
+      state.loading = false
+      state.isError = true
+      state.errorMessage = action.payload.message
     },
     [deleteTodos.pending]: state => {
-      state.status = 'loading'
-      state.error = null
+      state.loading = true
     },
     [deleteTodos.fulfilled]: (state, action) => {
-      state.status = 'resolved'
+      state.loading = false
+      state.isError = false
       state.todos = state.todos.filter(todo => !action.payload.todoIds.includes(todo.id))
     },
     [deleteTodos.rejected]: (state, action) => {
-      state.status = 'rejected'
-      state.error = action.payload
+      state.loading = false
+      state.isError = true
+      state.errorMessage = action.payload.message
     },
   },
 })
