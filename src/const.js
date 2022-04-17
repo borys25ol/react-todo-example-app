@@ -1,4 +1,4 @@
-const DEFAULT_TODOS = [
+export const DEFAULT_TODOS = [
   { id: 1, text: 'Complete online JavaScript course', completed: true },
   { id: 2, text: 'Jog around the park 3x', completed: false },
   { id: 3, text: '10 minutes meditation', completed: false },
@@ -7,10 +7,15 @@ const DEFAULT_TODOS = [
   { id: 6, text: 'Complete Todo App on Frontend Mentor', completed: false },
 ]
 
-const TASK_STATE = {
+export const TASK_STATE = {
   All: 'all',
   Active: 'active',
   Completed: 'completed',
 }
 
-export { DEFAULT_TODOS, TASK_STATE }
+export const THEME = {
+  Light: 'light',
+  Dark: 'dark',
+}
+
+export const getSpinnerColor = theme => (theme === THEME.Light ? 'black' : 'white')

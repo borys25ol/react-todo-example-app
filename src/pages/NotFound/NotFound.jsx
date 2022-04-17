@@ -1,7 +1,13 @@
 import React from 'react'
 
+import { Text, Wrapper } from 'components/NotFound'
+
 function NotFound() {
-  return <div>Not Found</div>
+  return (
+    <Wrapper>
+      <Text>Page Not Found</Text>
+    </Wrapper>
+  )
 }
 
 export { NotFound }

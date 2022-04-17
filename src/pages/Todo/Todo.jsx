@@ -1,35 +1,43 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { ThreeDots } from 'react-loader-spinner'
+import { Redirect } from 'react-router-dom'
 
 import { Heading, Main } from 'components/Layout'
 import { TodoForm } from 'components/TodoForm'
 import { TodoList } from 'components/TodoList'
 import { Footer } from 'components/Footer'
 import { todosSelector } from 'store/slices/todoSlice'
+import { authSelector } from 'store/slices/authSlice'
+import { useLocalStorage } from 'hooks/useLocalStorage'
+import { getSpinnerColor } from 'const'
 
 function Todo() {
-  const [loading, setLoading] = useState(true)
-  const { status } = useSelector(todosSelector)
+  const [theme] = useLocalStorage('theme')
 
-  const currentTheme = document.body.getAttribute('data-theme')
-  const spinnerColor = currentTheme === 'light' ? 'black' : 'white'
+  const { isLoggedIn } = useSelector(authSelector)
+  const { todos } = useSelector(todosSelector)
 
-  useEffect(() => {
-    if (status !== 'resolved') {
-      return
-    }
-    setLoading(false)
-  }, [status])
+  if (isLoggedIn === false) {
+    return <Redirect to="/login" />
+  }
 
   return (
     <>
-      <Main>
-        <Heading>To-do application</Heading>
-        <TodoForm />
-        {loading ? <ThreeDots color={spinnerColor} wrapperClass="spinner" /> : <TodoList />}
-      </Main>
-      <Footer />
+      {isLoggedIn && (
+        <>
+          <Main>
+            <Heading>To-do application</Heading>
+            <TodoForm />
+            {!todos ? (
+              <ThreeDots color={getSpinnerColor(theme)} wrapperClass="spinner" />
+            ) : (
+              <TodoList />
+            )}
+          </Main>
+          <Footer />
+        </>
+      )}
     </>
   )
 }

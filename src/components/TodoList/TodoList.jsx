@@ -19,6 +19,7 @@ import { filterActiveTasks, filterCompletedTasks } from 'utils'
 
 function TodoList() {
   const dispatch = useDispatch()
+
   const { todos } = useSelector(todosSelector)
 
   const [currentState, setCurrentState] = useState(TASK_STATE.All)
@@ -34,7 +35,9 @@ function TodoList() {
   const handleCompletedClear = () => {
     const completedTask = filterCompletedTasks(todos)
     const todoIds = completedTask.map(todo => todo.id)
-    dispatch(deleteTodos(todoIds))
+    if (todoIds.length) {
+      dispatch(deleteTodos(todoIds))
+    }
   }
 
   useEffect(() => {

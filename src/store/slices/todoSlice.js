@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { TodoAPIService } from 'api'
-
-const token = localStorage.getItem('token')
-
-const service = new TodoAPIService(token)
+import { TodoAPIService } from 'api/todo'
 
 export const fetchTodos = createAsyncThunk(
   'todo/fetchTodos',
   async function (_, { rejectWithValue }) {
     try {
+      const service = new TodoAPIService()
       const response = await service.fetchTodos()
       if (!response.success) {
         throw new Error(response.message)
@@ -25,6 +22,7 @@ export const createTodo = createAsyncThunk(
   'todo/createTodo',
   async function (text, { rejectWithValue }) {
     try {
+      const service = new TodoAPIService()
       const response = await service.createTodo(text)
       if (!response.success) {
         throw new Error(response.message)
@@ -42,6 +40,7 @@ export const updateTodo = createAsyncThunk(
   'todo/updateTodo',
   async function (todo, { rejectWithValue }) {
     try {
+      const service = new TodoAPIService()
       const response = await service.updateTodo(todo)
       if (!response.success) {
         throw new Error(response.message)
@@ -57,6 +56,7 @@ export const deleteTodo = createAsyncThunk(
   'todo/deleteTodo',
   async function (todoId, { rejectWithValue }) {
     try {
+      const service = new TodoAPIService()
       const response = await service.deleteTodo(todoId)
       if (!response.success) {
         throw new Error(response.message)
@@ -72,6 +72,7 @@ export const deleteTodos = createAsyncThunk(
   'todo/deleteTodos',
   async function (todoIds, { rejectWithValue }) {
     try {
+      const service = new TodoAPIService()
       const response = await service.deleteTodos(todoIds)
       if (!response.success) {
         throw new Error(response.message)

@@ -5,19 +5,19 @@ import { Provider } from 'react-redux'
 
 import App from 'App'
 import store from 'store'
-import { fetchTodos } from 'store/slices/todoSlice'
 
 import 'index.css'
+import { LoginWrapper } from 'components/Wrapper'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
-
-store.dispatch(fetchTodos())
 
 root.render(
   <Router>
     <React.StrictMode>
       <Provider store={store}>
-        <App />
+        <LoginWrapper>
+          <App />
+        </LoginWrapper>
       </Provider>
     </React.StrictMode>
   </Router>

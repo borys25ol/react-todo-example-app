@@ -6,6 +6,7 @@ import { createTodo } from 'store/slices/todoSlice'
 
 function TodoForm() {
   const dispatch = useDispatch()
+
   const [value, setValue] = useState('')
 
   const addTodo = () => {

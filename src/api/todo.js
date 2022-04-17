@@ -4,14 +4,14 @@ import {
   UPDATE_TODO_URL,
   DELETE_TODO_URL,
   DELETE_TODOS_URL,
+  LOCALSTORAGE_TOKEN_KEY,
 } from 'config'
 
 export class TodoAPIService {
   constructor(token) {
-    this.token = token
     this.headers = {
       Accept: 'application/json',
-      Authorization: `Basic ${token}`,
+      Authorization: `Basic ${localStorage.getItem(LOCALSTORAGE_TOKEN_KEY)}`,
       'Content-type': 'application/json',
     }
   }

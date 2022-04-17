@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   position: relative;
   padding: 14px 20px;
   display: flex;
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Field = styled.div`
+export const Field = styled.div`
   margin-top: 25px;
   display: flex;
   padding: 20px 10px;
@@ -29,26 +29,32 @@ const Field = styled.div`
   border-radius: 5px;
 `
 
-const Header = styled.div`
+export const Header = styled.div`
   margin-top: 10px;
   display: flex;
   align-items: center;
   flex-direction: column;
 `
 
-const Heading = styled.h1`
+export const Heading = styled.h1`
   font-size: 36px;
 `
 
-const Description = styled.p`
+export const Description = styled.p`
   font-size: 16px;
   margin-top: 15px;
   color: var(--footer-blue-color);
 `
 
-const Form = styled.form``
+export const ResponseMessage = styled.p`
+  margin-top: 25px;
+  font-style: italic;
+  font-weight: var(--fw-bold);
+`
 
-const Input = styled.input`
+export const Form = styled.form``
+
+export const Input = styled.input`
   display: block;
   width: 100%;
   margin-left: 12px;
@@ -66,14 +72,14 @@ const Input = styled.input`
   }
 `
 
-const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div`
   margin-top: 15px;
   display: flex;
   justify-content: right;
   border-radius: 5px;
 `
 
-const Button = styled.button`
+export const Button = styled.button`
   width: 120px;
   height: 50px;
   border-color: var(--border-color);
@@ -84,5 +90,3 @@ const Button = styled.button`
     background-color: #aaa;
   }
 `
-
-export { Header, Heading, Form, Description, Wrapper, Field, Input, Button, ButtonWrapper }

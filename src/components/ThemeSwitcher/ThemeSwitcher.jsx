@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 
 import { ReactComponent as IconMoon } from 'assets/icon-moon.svg'
 import { ReactComponent as IconSun } from 'assets/icon-sun.svg'
+import { THEME } from 'const'
 import { Wrapper } from 'components/ThemeSwitcher'
 import { useLocalStorage } from 'hooks/useLocalStorage'
 
 function ThemeSwitcher() {
-  const { storedValue, setValue } = useLocalStorage('theme', { theme: 'dark' })
-  const [theme, setTheme] = useState(storedValue.theme)
+  const [currentTheme, setCurrentTheme] = useLocalStorage('theme', THEME.Dark)
+  const [theme, setTheme] = useState(currentTheme)
 
   const iconsMap = {
     dark: <IconSun />,
@@ -15,13 +16,13 @@ function ThemeSwitcher() {
   }
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
+    setTheme(theme === THEME.Light ? THEME.Dark : THEME.Light)
   }
 
   useEffect(() => {
-    document.body.setAttribute('data-theme', theme)
-    setValue({ theme })
-  }, [theme, setValue])
+    document.body.setAttribute('data-theme', theme.toString())
+    setCurrentTheme(theme)
+  }, [theme, setCurrentTheme])
 
   return <Wrapper onClick={() => toggleTheme()}>{iconsMap[theme]}</Wrapper>
 }
