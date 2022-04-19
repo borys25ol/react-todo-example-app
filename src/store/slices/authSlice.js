@@ -1,15 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { LOCALSTORAGE_TOKEN_KEY } from 'config'
-import { AuthAPIService } from 'api/auth'
 import { getValue, setValue } from 'utils/localStorage'
-
-const service = new AuthAPIService()
+import AuthAPIService from 'api/auth'
 
 export const login = createAsyncThunk(
   'auth/login',
   async function ({ username, password }, { rejectWithValue }) {
-    const response = await service.login(username, password)
+    const response = await AuthAPIService.login(username, password)
     if (!response.success) {
       return rejectWithValue({ message: response.message })
     }
@@ -21,7 +19,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async function ({ username, email, fullName, password }, { rejectWithValue }) {
-    const response = await service.register(username, email, fullName, password)
+    const response = await AuthAPIService.register(username, email, fullName, password)
     if (!response.success) {
       return rejectWithValue({ message: response.message })
     }

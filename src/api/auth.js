@@ -30,4 +30,4 @@ class AuthAPIService {
   }
 }
 
-export { AuthAPIService }
+export default new AuthAPIService()
