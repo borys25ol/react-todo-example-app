@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
@@ -26,7 +26,6 @@ function Register() {
   const {
     register: registerField,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({ mode: 'onBlur' })
 
@@ -34,16 +33,17 @@ function Register() {
 
   const [startTimer] = useTimer(() => {
     dispatch(clearRegisterData())
-  }, 5000)
+  }, 3000)
 
   const onSubmit = data => {
     dispatch(register(data))
+  }
+
+  useEffect(() => {
     if (isFalse(registerSuccess)) {
       startTimer()
-    } else {
-      reset()
     }
-  }
+  }, [registerSuccess, startTimer])
 
   if (isLoggedIn) {
     return <Redirect to="/" />

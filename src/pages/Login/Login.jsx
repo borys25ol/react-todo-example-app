@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
@@ -33,14 +33,17 @@ function Login() {
 
   const [startTimer] = useTimer(() => {
     dispatch(clearLoginData())
-  }, 5000)
+  }, 3000)
 
   const onSubmit = data => {
     dispatch(login(data))
+  }
+
+  useEffect(() => {
     if (isTrue(registerSuccess) || isFalse(loginSuccess)) {
       startTimer()
     }
-  }
+  }, [registerSuccess, loginSuccess, startTimer])
 
   if (isLoggedIn) {
     return <Redirect to="/" />

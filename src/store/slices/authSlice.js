@@ -6,16 +6,26 @@ import { getValue, setValue } from 'utils/localStorage'
 
 const service = new AuthAPIService()
 
-export const login = createAsyncThunk('auth/login', async function ({ username, password }) {
-  const response = await service.login(username, password)
-  return { response }
-})
+export const login = createAsyncThunk(
+  'auth/login',
+  async function ({ username, password }, { rejectWithValue }) {
+    const response = await service.login(username, password)
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
+    }
+    setValue(LOCALSTORAGE_TOKEN_KEY, response.data.token)
+    return { message: response.message }
+  }
+)
 
 export const register = createAsyncThunk(
   'auth/register',
-  async function ({ username, email, fullName, password }) {
+  async function ({ username, email, fullName, password }, { rejectWithValue }) {
     const response = await service.register(username, email, fullName, password)
-    return { response }
+    if (!response.success) {
+      return rejectWithValue({ message: response.message })
+    }
+    return { message: response.message }
   }
 )
 
@@ -48,21 +58,25 @@ const authSlice = createSlice({
     },
     [login.fulfilled]: (state, action) => {
       state.loading = false
-      state.isLoggedIn = action.payload.response.success
-      state.loginSuccess = action.payload.response.success
-      state.loginMessage = action.payload.response.message
-      if (action.payload.response.success) {
-        const token = action.payload.response.data.token
-        setValue(LOCALSTORAGE_TOKEN_KEY, token)
-      }
+      state.isLoggedIn = true
+      state.loginSuccess = true
+      state.loginMessage = action.payload.message
+    },
+    [login.rejected]: (state, action) => {
+      state.loginSuccess = false
+      state.loginMessage = action.payload.message
     },
     [register.pending]: state => {
       state.loading = true
     },
     [register.fulfilled]: (state, action) => {
       state.loading = false
-      state.registerSuccess = action.payload.response.success
-      state.registerMessage = action.payload.response.message
+      state.registerSuccess = true
+      state.registerMessage = action.payload.message
+    },
+    [register.rejected]: (state, action) => {
+      state.registerSuccess = false
+      state.registerMessage = action.payload.message
     },
   },
 })
