@@ -37,7 +37,7 @@ function Login() {
 
   const onSubmit = data => {
     dispatch(login(data))
-    if (isTrue(registerSuccess) && isFalse(loginSuccess)) {
+    if (isTrue(registerSuccess) || isFalse(loginSuccess)) {
       startTimer()
     }
   }
