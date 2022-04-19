@@ -47,7 +47,6 @@ export const Description = styled.p`
 
 export const ResponseMessage = styled.p`
   margin-top: 25px;
-  font-style: italic;
   font-weight: var(--fw-bold);
 `
 

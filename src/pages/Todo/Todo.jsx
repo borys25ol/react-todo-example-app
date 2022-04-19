@@ -11,6 +11,7 @@ import { fetchTodos, todosSelector } from 'store/slices/todoSlice'
 import { authSelector } from 'store/slices/authSlice'
 import { useLocalStorage } from 'hooks/useLocalStorage'
 import { getSpinnerColor } from 'const'
+import { isFalse } from '../../utils/bool'
 
 function Todo() {
   const dispatch = useDispatch()
@@ -25,7 +26,7 @@ function Todo() {
     }
   }, [todos, isLoggedIn, dispatch])
 
-  if (isLoggedIn === false) {
+  if (isFalse(isLoggedIn)) {
     return <Redirect to="/login" />
   }
 

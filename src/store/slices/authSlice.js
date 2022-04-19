@@ -33,6 +33,14 @@ const authSlice = createSlice({
     setAuthorized(state) {
       state.isLoggedIn = !!getValue(LOCALSTORAGE_TOKEN_KEY)
     },
+    clearLoginData(state) {
+      state.loginSuccess = null
+      state.loginMessage = null
+    },
+    clearRegisterData(state) {
+      state.registerSuccess = null
+      state.registerMessage = null
+    },
   },
   extraReducers: {
     [login.pending]: state => {
@@ -59,7 +67,7 @@ const authSlice = createSlice({
   },
 })
 
-export const { setAuthorized } = authSlice.actions
+export const { setAuthorized, clearLoginData, clearRegisterData } = authSlice.actions
 
 export const authSelector = state => state.auth
 

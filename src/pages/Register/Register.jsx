@@ -17,7 +17,9 @@ import {
   ResponseMessage,
   Wrapper,
 } from 'components/AuthForm'
-import { authSelector, register } from 'store/slices/authSlice'
+import { authSelector, clearRegisterData, register } from 'store/slices/authSlice'
+import { useTimer } from 'hooks/useTimer'
+import { isFalse } from 'utils/bool'
 
 function Register() {
   const dispatch = useDispatch()
@@ -25,14 +27,22 @@ function Register() {
     register: registerField,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm({ mode: 'onBlur' })
 
   const { isLoggedIn, registerSuccess, registerMessage } = useSelector(authSelector)
 
+  const [startTimer] = useTimer(() => {
+    dispatch(clearRegisterData())
+  }, 5000)
+
   const onSubmit = data => {
     dispatch(register(data))
-    reset()
+    if (isFalse(registerSuccess)) {
+      startTimer()
+    } else {
+      reset()
+    }
   }
 
   if (isLoggedIn) {
@@ -45,14 +55,16 @@ function Register() {
 
   return (
     <Wrapper>
-      {isLoggedIn === false && (
+      {isFalse(isLoggedIn) && (
         <>
           <Header>
             <Heading>Sign up</Heading>
             <Description>
               <NavLink to="/login">Have an account?</NavLink>
             </Description>
-            {registerSuccess === false && <ResponseMessage>{registerMessage}</ResponseMessage>}
+            {isFalse(registerSuccess) && (
+              <ResponseMessage style={{ color: 'red' }}>{registerMessage}</ResponseMessage>
+            )}
           </Header>
 
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -113,9 +125,7 @@ function Register() {
               {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
             </Field>
             <ButtonWrapper>
-              <Button type="submit" disabled={!isValid}>
-                Sign up
-              </Button>
+              <Button type="submit">Sign up</Button>
             </ButtonWrapper>
           </Form>
         </>

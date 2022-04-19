@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useForm } from 'react-hook-form'
 
 import {
   Button,
@@ -15,8 +16,9 @@ import {
   ResponseMessage,
   Wrapper,
 } from 'components/AuthForm'
-import { authSelector, login } from 'store/slices/authSlice'
-import { useForm } from 'react-hook-form'
+import { authSelector, clearLoginData, login } from 'store/slices/authSlice'
+import { useTimer } from 'hooks/useTimer'
+import { isFalse, isTrue } from 'utils/bool'
 
 function Login() {
   const dispatch = useDispatch()
@@ -29,8 +31,15 @@ function Login() {
   const { registerSuccess, registerMessage } = useSelector(authSelector)
   const { isLoggedIn, loginSuccess, loginMessage } = useSelector(authSelector)
 
+  const [startTimer] = useTimer(() => {
+    dispatch(clearLoginData())
+  }, 5000)
+
   const onSubmit = data => {
     dispatch(login(data))
+    if (isTrue(registerSuccess) && isFalse(loginSuccess)) {
+      startTimer()
+    }
   }
 
   if (isLoggedIn) {
@@ -39,7 +48,7 @@ function Login() {
 
   return (
     <Wrapper>
-      {isLoggedIn === false && (
+      {isFalse(isLoggedIn) && (
         <>
           <Header>
             <Heading>Sign in</Heading>
@@ -47,7 +56,9 @@ function Login() {
               <NavLink to="/register">Need an account?</NavLink>
             </Description>
             {registerSuccess && <ResponseMessage>{registerMessage}</ResponseMessage>}
-            {loginSuccess === false && <ResponseMessage>{loginMessage}</ResponseMessage>}
+            {isFalse(loginSuccess) && (
+              <ResponseMessage style={{ color: 'red' }}>{loginMessage}</ResponseMessage>
+            )}
           </Header>
 
           <Form onSubmit={handleSubmit(onSubmit)}>
