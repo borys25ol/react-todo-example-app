@@ -31,7 +31,7 @@
 
   --family: 'Josefin Sans', sans-serif;
 
-  --fs: 12px;
+  --fs: 14px;
   --fs-footer: 12px;
 
   --fw-regular: 400;
@@ -50,6 +50,8 @@ body[data-theme='light'] {
   --background-color: var(--l-very-light-gray);
   --bg-image: var(--image-light-theme);
   --box-shadow: var(--l-box-shadow);
+  --auth-button-active-color: #eee;
+  --outline-color: var(--footer-blue-color);
 
   color: var(--l-very-dark-grayish-blue);
   background: var(--l-very-light-gray);
@@ -67,6 +69,8 @@ body[data-theme='dark'] {
   --background-color: var(--d-very-dark-desaturated-blue);
   --bg-image: var(--image-dark-theme);
   --box-shadow: var(--d-box-shadow);
+  --auth-button-active-color: #ddd;
+  --outline-color: var(--border-color);
 
   color: var(--d-light-grayish-blue);
   background: var(--d-very-dark-blue);
@@ -100,6 +104,13 @@ a:active {
 
 input {
   background-color: transparent;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+  background-color: transparent !important;
 }
 
 @media screen and (max-width: 375px) {

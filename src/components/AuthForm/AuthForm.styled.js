@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`
-  position: relative;
+  margin-top: 40px;
   padding: 14px 20px;
   display: flex;
   flex-direction: column;
@@ -17,6 +17,7 @@ export const Wrapper = styled.div`
   }
 
   @media screen and (min-width: 1024px) {
+    margin-top: 15px;
     padding: 22px 24px;
   }
 `
@@ -24,9 +25,7 @@ export const Wrapper = styled.div`
 export const Field = styled.div`
   margin-top: 25px;
   display: flex;
-  padding: 20px 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
+  flex-direction: column;
 `
 
 export const Header = styled.div`
@@ -55,38 +54,76 @@ export const ResponseMessage = styled.p`
 export const Form = styled.form``
 
 export const Input = styled.input`
+  padding: 20px 10px;
   display: block;
   width: 100%;
-  margin-left: 12px;
-  font-size: var(--fs);
   line-height: 12px;
+  font-size: var(--fs);
   color: var(--todo-color);
-
-  border: none;
-  outline: none;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
 
   &::placeholder {
+    padding-left: 5px;
     font-size: var(--fs);
     color: var(--input-placeholder-color);
     letter-spacing: -0.17px;
   }
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+    border: 2px solid var(--footer-blue-color);
+  }
+`
+
+export const ErrorMessage = styled.li`
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: red;
 `
 
 export const ButtonWrapper = styled.div`
   margin-top: 15px;
   display: flex;
-  justify-content: right;
   border-radius: 5px;
+
+  @media screen and (min-width: 768px) {
+    justify-content: right;
+  }
+
+  @media screen and (min-width: 1024px) {
+    justify-content: right;
+  }
 `
 
 export const Button = styled.button`
-  width: 120px;
+  width: 100%;
   height: 50px;
-  border-color: var(--border-color);
+  border: 2px solid var(--footer-blue-color);
   border-radius: inherit;
   cursor: pointer;
 
+  background-color: white;
+
   &:active {
-    background-color: #aaa;
+    background-color: var(--auth-button-active-color);
+  }
+
+  &:disabled {
+    color: black;
+    opacity: 0.8;
+    background-color: white !important;
+    cursor: not-allowed;
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 120px;
+  }
+
+  @media screen and (min-width: 1024px) {
+    width: 120px;
   }
 `

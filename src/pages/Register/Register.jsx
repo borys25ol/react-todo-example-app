@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { NavLink, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useForm } from 'react-hook-form'
 
+import { EMAIL_REGEX } from 'config'
 import {
   Button,
   ButtonWrapper,
   Description,
+  ErrorMessage,
   Field,
   Form,
   Header,
@@ -18,18 +21,18 @@ import { authSelector, register } from 'store/slices/authSlice'
 
 function Register() {
   const dispatch = useDispatch()
+  const {
+    register: registerField,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({ mode: 'onBlur' })
 
   const { isLoggedIn, registerSuccess, registerMessage } = useSelector(authSelector)
 
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleSubmit = event => {
-    event.preventDefault()
-    dispatch(register({ username, email, fullName, password }))
-    setPassword('')
+  const onSubmit = data => {
+    dispatch(register(data))
+    reset()
   }
 
   if (isLoggedIn) {
@@ -52,41 +55,67 @@ function Register() {
             {registerSuccess === false && <ResponseMessage>{registerMessage}</ResponseMessage>}
           </Header>
 
-          <Form onSubmit={e => handleSubmit(e)}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Field>
               <Input
+                {...registerField('username', {
+                  required: 'Required field',
+                  minLength: {
+                    value: 5,
+                    message: 'Should be minimum 5 symbols',
+                  },
+                })}
                 type="text"
                 placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
               />
+              {errors.username && <ErrorMessage>{errors.username?.message}</ErrorMessage>}
             </Field>
             <Field>
               <Input
+                {...registerField('email', {
+                  required: 'Required field',
+                  pattern: {
+                    value: EMAIL_REGEX,
+                    message: 'Please enter a valid email',
+                  },
+                })}
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
               />
+              {errors.email && <ErrorMessage>{errors.email?.message}</ErrorMessage>}
             </Field>
             <Field>
               <Input
+                {...registerField('fullName', {
+                  required: 'Required field',
+                  minLength: {
+                    value: 3,
+                    message: 'Should be minimum 3 symbols',
+                  },
+                })}
                 type="text"
                 placeholder="Full Name"
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
               />
+              {errors.fullName && <ErrorMessage>{errors.fullName?.message}</ErrorMessage>}
             </Field>
             <Field>
               <Input
+                {...registerField('password', {
+                  required: 'Required field',
+                  minLength: {
+                    value: 8,
+                    message: 'Should be minimum 8 symbols',
+                  },
+                })}
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
               />
+              {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
             </Field>
             <ButtonWrapper>
-              <Button>Sign up</Button>
+              <Button type="submit" disabled={!isValid}>
+                Sign up
+              </Button>
             </ButtonWrapper>
           </Form>
         </>

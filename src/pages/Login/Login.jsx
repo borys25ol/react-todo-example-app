@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { NavLink, Redirect } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -6,6 +6,7 @@ import {
   Button,
   ButtonWrapper,
   Description,
+  ErrorMessage,
   Field,
   Form,
   Header,
@@ -15,19 +16,21 @@ import {
   Wrapper,
 } from 'components/AuthForm'
 import { authSelector, login } from 'store/slices/authSlice'
+import { useForm } from 'react-hook-form'
 
 function Login() {
   const dispatch = useDispatch()
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ mode: 'onSubmit' })
 
   const { registerSuccess, registerMessage } = useSelector(authSelector)
   const { isLoggedIn, loginSuccess, loginMessage } = useSelector(authSelector)
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleSubmit = event => {
-    event.preventDefault()
-    dispatch(login({ username, password }))
+  const onSubmit = data => {
+    dispatch(login(data))
   }
 
   if (isLoggedIn) {
@@ -47,25 +50,37 @@ function Login() {
             {loginSuccess === false && <ResponseMessage>{loginMessage}</ResponseMessage>}
           </Header>
 
-          <Form onSubmit={e => handleSubmit(e)}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Field>
               <Input
+                {...registerField('username', {
+                  required: 'Required field',
+                  minLength: {
+                    value: 5,
+                    message: 'Username field should be minimum 5 symbols',
+                  },
+                })}
                 type="text"
                 placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
               />
+              {errors.username && <ErrorMessage>{errors.username?.message}</ErrorMessage>}
             </Field>
             <Field>
               <Input
+                {...registerField('password', {
+                  required: 'Required field',
+                  minLength: {
+                    value: 8,
+                    message: 'Password field should be minimum 8 symbols',
+                  },
+                })}
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
               />
+              {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
             </Field>
             <ButtonWrapper>
-              <Button>Sign in</Button>
+              <Button type="submit">Sign in</Button>
             </ButtonWrapper>
           </Form>
         </>
