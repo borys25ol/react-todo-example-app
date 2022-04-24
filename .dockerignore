@@ -1,0 +1,14 @@
+.cache
+.idea
+.git
+.DS_Store
+__pycache__
+logs
+node_modules
+.prettierrc.json
+README.md
+style-guide.md
+.env.example
+screenshots
+design
+build
